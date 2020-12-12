@@ -75,8 +75,7 @@ protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	// End of APawn interface
-	UFUNCTION(BlueprintCallable, Category = "Pickups")
-	void CollectPickups();
+
 	//starting power
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Power", Meta=(BlueprintProtected = "true"))
 	float InitialPower;
@@ -101,5 +100,11 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	FORCEINLINE class USphereComponent* GetCollectionSphere() const { return CollectionSphere; }
+
+	UFUNCTION(BlueprintCallable, Category = "Pickups")
+		void CollectPickups();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Won", Meta = (BlueprintProtected = "true"))
+		bool WinTriggered;
 };
 

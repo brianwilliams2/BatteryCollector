@@ -81,6 +81,8 @@ void ASpawnVolume::SpawnPickup()
 			APickup* const SpawnedPickup=World->SpawnActor<APickup>(WhatToSpawn, SpawnLocation, SpawnRotation, SpawnParams);
 			SpawnDelay = FMath::FRandRange(SpawnDelayRangeLow, SpawnDelayRangeHigh);
 			GetWorldTimerManager().SetTimer(SpawnTimer, this, &ASpawnVolume::SpawnPickup, SpawnDelay, false);
+			// each spawn volume will only spawn one pickup
+			SetSpawningActive(false);
 		}
 	}
 }

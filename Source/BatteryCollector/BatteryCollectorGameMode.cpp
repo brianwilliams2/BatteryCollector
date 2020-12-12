@@ -67,21 +67,33 @@ void ABatteryCollectorGameMode::Tick(float DeltaTime)
 	ABatteryCollectorCharacter* MyCharacter = Cast<ABatteryCollectorCharacter>(UGameplayStatics::GetPlayerPawn(this, 0));
 	if (MyCharacter)
 	{
-		//win condition
-		if (MyCharacter->GetCurrentPower() > PowerToWin)
+		// If the character has touched the win trigger
+		if (MyCharacter->WinTriggered)
 		{
+		// Win
 			SetCurrentState(EBatteryPlayState::EWon);
 		}
-		else if (MyCharacter->GetCurrentPower() > 0)
+		// If your gas tank is over full
+		if (MyCharacter->GetCurrentPower() > PowerToWin)
+		{
+			// The difference between the player's current gas amount and the amount of a full tank of gas
+			float overflowPower = MyCharacter->GetCurrentPower() - PowerToWin;
+			// Cap gas amount
+			MyCharacter->UpdatePower(-overflowPower);
+		}
+		if (MyCharacter->GetCurrentPower() > 0)
 		{
 			//decrease power by decay rate
 			MyCharacter->UpdatePower(-DeltaTime * DecayRate * (MyCharacter->GetInitialPower()));
 		}
 		//lose condition
-		else
+		if (MyCharacter->GetCurrentPower() <= 0)
 		{
 			SetCurrentState(EBatteryPlayState::EGameOver);
 		}
+
+		// Now the player will automatically collect any pickups they run into, rather than having to press a key
+		MyCharacter->CollectPickups();
 	}
 }
 
@@ -118,6 +130,12 @@ void ABatteryCollectorGameMode::HandleNewState(EBatteryPlayState NewState)
 		for (ASpawnVolume* Volume : SpawnVolumeActors)
 		{
 			Volume->SetSpawningActive(false);
+		}
+		//lock player movement
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+		if (PlayerController)
+		{
+			PlayerController->SetCinematicMode(true, false, false, true, true);
 		}
 	}
 	break;
