@@ -81,7 +81,7 @@ void ABatteryCollectorGameMode::Tick(float DeltaTime)
 			// Cap gas amount
 			MyCharacter->UpdatePower(-overflowPower);
 		}
-		if (MyCharacter->GetCurrentPower() > 0)
+		if (MyCharacter->GetCurrentPower() > 0 && !MyCharacter->WinTriggered)
 		{
 			//decrease power by decay rate
 			MyCharacter->UpdatePower(-DeltaTime * DecayRate * (MyCharacter->GetInitialPower()));
@@ -151,12 +151,12 @@ void ABatteryCollectorGameMode::HandleNewState(EBatteryPlayState NewState)
 		{
 			PlayerController->SetCinematicMode(true, false, false, true, true);
 		}
-		ACharacter* MyCharacter = UGameplayStatics::GetPlayerCharacter(this,0);
+		/*ACharacter* MyCharacter = UGameplayStatics::GetPlayerCharacter(this, 0);
 		if (MyCharacter)
 		{
 			MyCharacter->GetMesh()->SetSimulatePhysics(true);
 			MyCharacter->GetMovementComponent()->MovementState.bCanJump = false;
-		}
+		}*/
 	}
 	break;
 	case EBatteryPlayState::EUnknown:

@@ -74,9 +74,9 @@ void ASpawnVolume::SpawnPickup()
 			//get spawn location and rotation
 			FVector SpawnLocation = GetRandomPointInVOlume();
 			FRotator SpawnRotation;
-			SpawnRotation.Yaw = FMath::FRand() * 360.0f;
-			SpawnRotation.Pitch = FMath::FRand() * 360.0f;
-			SpawnRotation.Roll = FMath::FRand() * 360.0f;
+			SpawnRotation.Yaw = 0.0f;
+			SpawnRotation.Pitch = 0.0f;
+			SpawnRotation.Roll = 0.0f;
 			//spawn it
 			APickup* const SpawnedPickup=World->SpawnActor<APickup>(WhatToSpawn, SpawnLocation, SpawnRotation, SpawnParams);
 			SpawnDelay = FMath::FRandRange(SpawnDelayRangeLow, SpawnDelayRangeHigh);

@@ -50,7 +50,6 @@ ABatteryCollectorCharacter::ABatteryCollectorCharacter()
 	//create collection sphere
 	CollectionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("CollectionSphere"));
 	CollectionSphere->AttachTo(RootComponent);
-	CollectionSphere->SetSphereRadius(200.f);
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 	InitialPower = 2000.f;
@@ -150,6 +149,8 @@ void ABatteryCollectorCharacter::MoveRight(float Value)
 
 void ABatteryCollectorCharacter::CollectPickups()
 {
+	CollectionSphere->SetSphereRadius(100.f);
+
 	TArray<AActor*> CollectedActors;
 	CollectionSphere->GetOverlappingActors(CollectedActors);
 
@@ -164,10 +165,19 @@ void ABatteryCollectorCharacter::CollectPickups()
 			TestPickup->WasCollected();
 			//check to see if pickup is a battery
 			ABatteryPickup* const TestBattery = Cast<ABatteryPickup>(TestPickup);
+
 			if (TestBattery)
 			{
 				//increase by collected power
 				CollectedPower += TestBattery->GetPower();
+				UE_LOG(LogClass, Log, TEXT("Collected gas!"));
+			}
+
+			else
+			{
+				// decrease power
+				UpdatePower(-700.0f);
+				UE_LOG(LogClass, Log, TEXT("Hit an obstacle!"));
 			}
 
 			TestPickup->SetActive(false);
