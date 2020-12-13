@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Kismet/GameplayStatics.h"
 #include "BatteryCollectorCharacter.generated.h"
 
 UCLASS(config=Game)
@@ -21,6 +22,9 @@ class ABatteryCollectorCharacter : public ACharacter
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class USphereComponent* CollectionSphere;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class USphereComponent* ObstacleSphere;
 public:
 	ABatteryCollectorCharacter();
 
@@ -104,7 +108,22 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Pickups")
 		void CollectPickups();
 
+	UFUNCTION(BlueprintCallable, Category = "Pickups")
+		void ObstaclePickups();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Won", Meta = (BlueprintProtected = "true"))
 		bool WinTriggered;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", Meta = (BlueprintProtected = "true"))
+		USoundBase* WinSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", Meta = (BlueprintProtected = "true"))
+		USoundBase* LoseSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", Meta = (BlueprintProtected = "true"))
+		USoundBase* ObstacleSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", Meta = (BlueprintProtected = "true"))
+		USoundBase* PickupSound;
 };
 

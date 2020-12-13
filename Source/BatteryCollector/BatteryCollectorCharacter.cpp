@@ -50,6 +50,9 @@ ABatteryCollectorCharacter::ABatteryCollectorCharacter()
 	//create collection sphere
 	CollectionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("CollectionSphere"));
 	CollectionSphere->AttachTo(RootComponent);
+	ObstacleSphere = CreateDefaultSubobject<USphereComponent>(TEXT("ObstacleSphere"));
+	ObstacleSphere->AttachTo(RootComponent);
+	ObstacleSphere->SetSphereRadius(70.0f);
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 	InitialPower = 2000.f;
@@ -147,6 +150,32 @@ void ABatteryCollectorCharacter::MoveRight(float Value)
 	}
 }
 
+void ABatteryCollectorCharacter::ObstaclePickups()
+{
+	ObstacleSphere->SetSphereRadius(70.0f);
+
+	TArray<AActor*> ObstacleActors;
+	ObstacleSphere->GetOverlappingActors(ObstacleActors);
+
+	for (int32 iObstacle = 0; iObstacle < ObstacleActors.Num(); ++iObstacle)
+	{
+		APickup* const ObsPickup = Cast<APickup>(ObstacleActors[iObstacle]);
+		if (ObsPickup && !ObsPickup->IsPendingKill() && ObsPickup->IsActive())
+		{
+			APickup* const TrafficCone = Cast<APickup>(ObsPickup);
+
+			if (TrafficCone)
+			{
+				// decrease power
+				UpdatePower(-700.0f);
+				UE_LOG(LogClass, Log, TEXT("Hit an obstacle!"));
+				ObsPickup->SetActive(false);
+				UGameplayStatics::PlaySoundAtLocation(GetWorld(), ObstacleSound, GetActorLocation(), 2.0f, 1.0f, 0.0f);
+			}
+		}
+	}
+}
+
 void ABatteryCollectorCharacter::CollectPickups()
 {
 	CollectionSphere->SetSphereRadius(100.f);
@@ -171,16 +200,9 @@ void ABatteryCollectorCharacter::CollectPickups()
 				//increase by collected power
 				CollectedPower += TestBattery->GetPower();
 				UE_LOG(LogClass, Log, TEXT("Collected gas!"));
+				TestPickup->SetActive(false);
+				UGameplayStatics::PlaySoundAtLocation(GetWorld(), PickupSound, GetActorLocation(), 1.0f, 1.0f, 0.0f);
 			}
-
-			else
-			{
-				// decrease power
-				UpdatePower(-700.0f);
-				UE_LOG(LogClass, Log, TEXT("Hit an obstacle!"));
-			}
-
-			TestPickup->SetActive(false);
 		}
 	}
 	if (CollectedPower > 0)

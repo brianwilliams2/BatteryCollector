@@ -37,6 +37,9 @@ public:
 	//set new play state
 	void SetCurrentState(EBatteryPlayState NewState);
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", Meta = (BlueprintProtected = "true"))
+		bool playedSound;
+
 protected:
 	//rate you lose power
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Power", Meta = (BlueprintProtected = "true"))
