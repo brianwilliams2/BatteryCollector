@@ -27,6 +27,8 @@ void ABatteryCollectorGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
+	playedSound = false;
+
 	//find all spawn actors
 	TArray<AActor*> FoundActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASpawnVolume::StaticClass(), FoundActors);
@@ -72,6 +74,11 @@ void ABatteryCollectorGameMode::Tick(float DeltaTime)
 		{
 		// Win
 			SetCurrentState(EBatteryPlayState::EWon);
+			if (!playedSound)
+			{
+				UGameplayStatics::PlaySoundAtLocation(GetWorld(), MyCharacter->WinSound, MyCharacter->GetActorLocation(), 2.0f, 1.0f, 0.0f);
+				playedSound = true;
+			}
 		}
 		// If your gas tank is over full
 		if (MyCharacter->GetCurrentPower() > PowerToWin)
@@ -90,10 +97,16 @@ void ABatteryCollectorGameMode::Tick(float DeltaTime)
 		if (MyCharacter->GetCurrentPower() <= 0)
 		{
 			SetCurrentState(EBatteryPlayState::EGameOver);
+			if (!playedSound)
+			{
+				UGameplayStatics::PlaySoundAtLocation(GetWorld(), MyCharacter->LoseSound, MyCharacter->GetActorLocation(), 2.0f, 1.0f, 0.0f);
+				playedSound = true;
+			}
 		}
 
 		// Now the player will automatically collect any pickups they run into, rather than having to press a key
 		MyCharacter->CollectPickups();
+		MyCharacter->ObstaclePickups();
 	}
 }
 
